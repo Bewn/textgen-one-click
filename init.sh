@@ -88,5 +88,3 @@ main () { #pythonic bash with functional flair
     #hook_mamba
     #python $_cwd/server.py --share
 }
-
-main
