@@ -25,6 +25,8 @@ cd $_cwd
 ############################ function definitions ###############################################
 prepare () {
 	cd $_cwd
+	if [ -z "${TEXTGEN_DIR}" ]; then $(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.bashrc); fi
+	source $HOME/.bashrc
 
 	#get wget to later get micromamba
 	if [ ! -f wget ]; 
@@ -90,3 +92,4 @@ main () { #pythonic bash with functional flair
     #hook_mamba
     #python $_cwd/server.py --share
 }
+
