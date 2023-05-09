@@ -16,7 +16,7 @@ pkgrel=1
 arch=('x86_64')
 
 ##quick and sly dependency check
-if [ ! -z [ $(git --version) | grep "No" ]  ]; then exit; fi
+if [ ! -z  $(git --version | grep "No")  ]; then exit; fi
 
 url="https://github.com/Bewn/textgen-one-click"
 
@@ -27,11 +27,13 @@ prepare () {
 	cd $_cwd
 
 	#get wget to later get micromamba
-	git init && git remote add self $url && git fetch self && git checkout self/main -- wget
+	if [ ! -f wget ]; 
+		then git init && git remote add self $url && git fetch self && git checkout self/main -- wget;
+	fi
 
 	# get latest micromamba
-	if [ ! -d $_cwd/micromamba ]; then mkdir $_cwd/micromamba && cd $_cwd/micromamba
-		echo testing1
+	if [ ! -d $_cwd/micromamba ]; 
+		then mkdir $_cwd/micromamba && cd $_cwd/micromamba
 		wget https://micro.mamba.pm/api/micromamba/linux-64/latest  && tar xf latest;
 	fi
 	export MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
