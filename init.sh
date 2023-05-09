@@ -10,7 +10,7 @@
 
 # Maintainer: Ben Rosebery <benrosebery@gmail.com>
 
-pkgname=textgen-ben
+pkgname=textgen-one-click
 pkgver=0.5
 pkgrel=1
 arch=('x86_64')
@@ -21,7 +21,8 @@ if [ ! -z  $(git --version | grep "No")  ]; then exit; fi
 url="https://github.com/Bewn/textgen-one-click"
 
 _cwd=$PWD
-cd $_cwd
+export TEXTGEN_DIR=$_cwd
+cd $TEXTGEN_DIR
 ############################ function definitions ###############################################
 prepare () {
 	cd $_cwd
@@ -38,16 +39,17 @@ prepare () {
 		then mkdir $_cwd/micromamba && cd $_cwd/micromamba
 		wget https://micro.mamba.pm/api/micromamba/linux-64/latest  && tar xf latest;
 	fi
-	export MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
+	MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
 	
 	# make environment
-	$MAMBA_EXE create --prefix=$_cwd/env_textgen
+	if [ -z ${_mamba_env} ]; 
+		then $MAMBA_EXE create --prefix=$_cwd/env_textgen;
+	fi
 	export _mamba_env=$_cwd/env_textgen
 }
 
 hook_mamba () {
-	eval "$($MAMBA_EXE shell hook --shell=bash)"
-	micromamba activate $_mamba_env
+	eval $($TEXTGEN_DIR/micromamba/bin/micromamba shell hook $_mamba_env --shell=bash)
 }
 
 build () {
@@ -79,17 +81,19 @@ package () {
 	sudo mv $_cwd $pkgdir/opt
 }
 
-cd_to_new_portable_install () {
+cd_to_portable_install () {
     cd $_cwd/textgen-portable
 }
 
+first_init () {
+	prepare
+	build
+	export TEXTGEN_DIR=$PWD
+}
 ################## main #############################
 #####################################################
 main () { #pythonic bash with functional flair
     prepare
-    build
-    #cd_to_new_portable_install
-    #hook_mamba
     #python $_cwd/server.py --share
 }
-
+main
