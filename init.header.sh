@@ -28,11 +28,14 @@ _cwd=$PWD
 prepare () {
 	cd $_cwd
 	if [ -z "${TEXTGEN_DIR}" ]; 
-		then $(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.bashrc); 
+		then grep $HOME/.bashrc TEXTGEN_DIR > /tmp/has_textgen;
+			if [ -z ${/tmp/has_textgen} ]; 
+				then $(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.bashrc); 
+			fi
 	fi
 	source $HOME/.bashrc
 	cd $TEXTGEN_DIR
-
+	
 	#get wget to later get micromamba
 	if [ ! -f wget ]; 
 		then git init && git remote add self $url && git fetch self && git checkout self/main -- wget;
@@ -96,7 +99,6 @@ first_init () {
 	prepare
 	make_env
 	build
-	export TEXTGEN_DIR=$PWD
 }
 ################## main #############################
 #####################################################

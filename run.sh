@@ -12,8 +12,10 @@ cd $TEXTGEN_DIR
 micromamba --version
 
 # run main as defined in init.header.sh
+echo "running main"
 main
-echo testing
+echo "testing hook"
+hook_mamba
 #micromamba activate $TEXTGEN_DIR/env_textgen
 
 
