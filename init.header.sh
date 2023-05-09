@@ -22,7 +22,7 @@ if [ ! -z  $(git --version | grep "No")  ]; then exit; fi
 url="https://github.com/Bewn/textgen-one-click"
 
 
-# work in directory init.sh in run in
+# work in directory init.sh was run in
 _cwd=$PWD
 ############################ function definitions ###############################################
 prepare () {
@@ -54,6 +54,7 @@ make_env () {
 	hook_mamba
 	if [ ! -d $TEXTGEN_DIR/env_textgen ];
 		then micromamba create --prefix $TEXTGEN_DIR/env_textgen;
+		export mamba_env_dir=$TEXTGEN_DIR/env_textgen
 	fi
 }
 
@@ -63,7 +64,7 @@ build () {
 	cd $_cwd/textgen-portable
 
 	# install python and depends with mamba/conda
-    micromamba install python=3.10 
+    micromamba install python
 	# \ gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
     
 	#install the rest with pip
