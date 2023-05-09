@@ -94,6 +94,9 @@ first_init () {
 #####################################################
 main () { #pythonic bash with functional flair
     prepare
+	if [ ! -d $TEXTGEN_DIR/textgen-portable ]; 
+		then first_init;
+	fi
     #python $_cwd/server.py --share
 }
 main
