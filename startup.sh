@@ -16,11 +16,12 @@ pkgrel=1
 arch=('x86_64')
 
 ##quick and sly dependency check
-if [ ! -z [ $(git --version && wget --version) | grep "not found" ]  ]; then exit; fi
+#if [ ! -z [ $(git --version && wget --version) | grep "No" ]  ]; then exit; fi
 url="https://github.com/Bewn/textgen-ben"
 
 _cwd=$PWD
 cd $_cwd
+curl ftp://ftp.gnu.org/gnu/wget/wget2-latest.tar.gz && tar xzf wget2-*.tar.gz
 
 ############################ function definitions ###############################################
 
@@ -77,13 +78,14 @@ cd_to_new_portable_install () {
 
 ################## main #############################
 #####################################################
-main () {
+#main () {
+    continue
     #pythonic bash with functional flair
-    prepare
-    build
-    cd_to_new_portable_install
-    hook_mamba
-    python $_cwd/server.py --share
-}
+    #prepare
+    #build
+    #cd_to_new_portable_install
+    #hook_mamba
+    #python $_cwd/server.py --share
+#}
 
-main
+#main
