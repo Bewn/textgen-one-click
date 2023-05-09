@@ -51,17 +51,17 @@ build () {
     if [ ! -d $_cwd/textgen-portable ]; then mkdir $_cwd/textgen-portable; fi 
 	cd $_cwd/textgen-portable
 
-	#install python and depends with mamba/conda
-    #micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+	# install python and depends with mamba/conda
+    micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
     
 	#install the rest with pip
-    #pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+    pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
 
 	#get the latest git version of oobabooga textgen
 	git init && git remote add original https://github.com/oobabooga/text-generation-webui && git fetch original
 	git checkout original/main -- server.py download-model.py settings-template.json characters css docs extensions loras models modules presets prompts softprompts training
 
-	#cython for compiling 
+	# cython for compiling 
 	#pip install cython
 }
 
@@ -81,9 +81,7 @@ cd_to_new_portable_install () {
 
 ################## main #############################
 #####################################################
-main () {
-	#echo testing
-    #pythonic bash with functional flair
+main () { #pythonic bash with functional flair
     prepare
     build
     #cd_to_new_portable_install
