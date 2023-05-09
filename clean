@@ -1,1 +1,1 @@
-rm -r textgen-portable env_textgen micromamba 
+sudo rm -rf textgen-portable env_textgen micromamba 
