@@ -7,7 +7,7 @@ source $TEXTGEN_DIR/init.sh
 cd $TEXTGEN_DIR
 
 hook_mamba
-micromamba activate $TEXTGEN_DIR/env_textgen
+#micromamba activate $TEXTGEN_DIR/env_textgen
 
 
 
