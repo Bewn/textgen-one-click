@@ -3,7 +3,7 @@
 # accessible to generic x86_64 distros
 #
 # this is a shell scipt to simplifiy installing the oobabooga text generation webui
-# it's self contained so the only dependencies are git and wget
+# it's self contained so the only dependency is git and a shell
 # you don't even need python! this downloads micromamba and creates a fast and small conda env.
 # this will install "textgen-portable" in your current directory
 
@@ -16,28 +16,27 @@ pkgrel=1
 arch=('x86_64')
 
 ##quick and sly dependency check
-#if [ ! -z [ $(git --version && wget --version) | grep "No" ]  ]; then exit; fi
-url="https://github.com/Bewn/textgen-ben"
+if [ ! -z [ $(git --version) | grep "No" ]  ]; then exit; fi
+
+url="https://github.com/Bewn/textgen-one-click"
 
 _cwd=$PWD
 cd $_cwd
-curl ftp://ftp.gnu.org/gnu/wget/wget2-latest.tar.gz && tar xzf wget2-*.tar.gz
-
 ############################ function definitions ###############################################
-
 prepare () {
 	cd $_cwd
-	if [ ! -d "$_cwd/textgen-portable" ]; then mkdir $_cwd/textgen-portable; fi
-	cd $_cwd/textgen-portable
-	_cwd=$_cwd/textgen-portable
 
-	#download latest micromamba
+	#get wget to later get micromamba
+	git init && git remote add self $url && git fetch self && git checkout self/main -- wget
+
+	# get latest micromamba
 	if [ ! -d $_cwd/micromamba ]; then mkdir $_cwd/micromamba && cd $_cwd/micromamba
-		wget https://micro.mamba.pm/api/micromamba/linux-64/latest && tar xf latest;
+		echo testing1
+		wget https://micro.mamba.pm/api/micromamba/linux-64/latest  && tar xf latest;
 	fi
 	export MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
 	
-	#make  environment
+	# make environment
 	$MAMBA_EXE create --prefix=$_cwd/env_textgen
 	export _mamba_env=$_cwd/env_textgen
 }
@@ -49,17 +48,21 @@ hook_mamba () {
 
 build () {
 	hook_mamba
-    cd $_cwd
-    micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
-    
-    pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+    if [ ! -d $_cwd/textgen-portable ]; then mkdir $_cwd/textgen-portable; fi 
+	cd $_cwd/textgen-portable
 
+	#install python and depends with mamba/conda
+    #micromamba install python=3.10 gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+    
+	#install the rest with pip
+    #pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
+
+	#get the latest git version of oobabooga textgen
 	git init && git remote add original https://github.com/oobabooga/text-generation-webui && git fetch original
 	git checkout original/main -- server.py download-model.py settings-template.json characters css docs extensions loras models modules presets prompts softprompts training
-	git remote add benver $url && git fetch benver 
-	git checkout benver/main -- bendir 
 
-	pip install cython
+	#cython for compiling 
+	#pip install cython
 }
 
 package () {
@@ -78,14 +81,14 @@ cd_to_new_portable_install () {
 
 ################## main #############################
 #####################################################
-#main () {
-    continue
+main () {
+	#echo testing
     #pythonic bash with functional flair
-    #prepare
-    #build
+    prepare
+    build
     #cd_to_new_portable_install
     #hook_mamba
     #python $_cwd/server.py --share
-#}
+}
 
-#main
+main
