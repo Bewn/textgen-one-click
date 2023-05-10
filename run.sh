@@ -63,15 +63,22 @@ run () {
     ## we now have free access to the functions defined in the header
     prepare_mamba && echo "micromamba is installed"
 
-    #create env_textgen if not already created
+    #create env_textgen (passes if already created)
     make_env
 
     # hook into env_textgen
-    eval "$(micromamba shell hook --shell=bash $TEXTGEN_DIR/env_textgen)" && echo "mamba hooked"
+    eval "$(micromamba shell hook --shell=bash -p $TEXTGEN_DIR/env_textgen)" && echo "mamba hooked"
     echo "micromamba v. $(micromamba --version) active" # we can now run micromamba in the correct env and shell!
+    
+    if [ ! -d $TEXTGEN_DIR/textgen-portable ];
+        then build;
+    fi
 
-    eval "$($TEXTGEN_DIR/micromamba/bin/micromamba shell hook --shell=bash --prefix=$TEXTGEN_DIR/env_textgen)"
-    build
+    read -n1 -p "do you want to check for updates? [y/N]" user_input
+    case $user_input in
+        y|Y) check_up_to_date ;;
+        n|N|*) echo "continuing..." ;;
+    esac
 } 
 run
 #micromamba --version
