@@ -3,19 +3,23 @@
 # this script will let you run the environment created with init.sh
 #
 
-# read in the header/init code
-source $TEXTGEN_DIR/init.header.sh
+if [ -f $HOME/.textgenrc ];
+    then source $HOME/.textgenrc;
+    echo ".textgenrc loaded"
+fi
 
-# enter main directory
-cd $TEXTGEN_DIR
+if [ -z ${TEXTGEN_DIR} ];
+    echo "TEXTGEN_DIR not set"
+    then exit 0;
+fi
 
-micromamba --version
+#micromamba --version
 
 # run main as defined in init.header.sh
-echo "running main"
-main
-echo "testing hook"
-hook_mamba
+#echo "running main"
+#main
+#echo "testing hook"
+#hook_mamba
 #micromamba activate $TEXTGEN_DIR/env_textgen
 
 
