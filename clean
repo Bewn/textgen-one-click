@@ -1,1 +1,2 @@
 sudo rm -rf textgen-portable env_textgen micromamba 
+rm ~/.textgenrc
