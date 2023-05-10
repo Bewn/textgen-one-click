@@ -22,13 +22,9 @@ if [ ! -z  $(git --version | grep "No")  ]; then exit; fi
 url="https://github.com/Bewn/textgen-one-click"
 
 
-# work in directory init.sh was run in
+# work in directory run.sh was run in
 _cwd=$PWD
 ############################ function definitions ###############################################
-
-
-
-
 prepare () {
 	cd $_cwd
 	init_env
@@ -97,13 +93,4 @@ first_init () {
 	prepare
 	make_env
 	build
-}
-################## main #############################
-#####################################################
-main () { #pythonic bash with functional flair
-    prepare
-	if [ ! -d $TEXTGEN_DIR/textgen-portable ]; 
-		then first_init;
-	fi
-    #python $_cwd/server.py --share
 }

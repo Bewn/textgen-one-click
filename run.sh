@@ -57,8 +57,7 @@ run () {
     fi
     
     # load in header now that TEXTGEN_DIR is ensured
-    source $TEXTGEN_DIR/init.header.sh
-    echo "init header loaded"
+    source $TEXTGEN_DIR/init.header.sh && echo "init header loaded"
 } 
 run
 #micromamba --version
