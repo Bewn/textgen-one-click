@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 #
 # this script will let you run the environment created with init.sh
-#
+# then henceforth run the server etc.
+# I'm coding in bash for generic shell, with a functional style!
 
 _cwd=$PWD
 _add_env_var () {
@@ -58,6 +59,19 @@ run () {
     
     # load in header now that TEXTGEN_DIR is ensured
     source $TEXTGEN_DIR/init.header.sh && echo "init header loaded"
+
+    ## we now have free access to the functions defined in the header
+    prepare_mamba && echo "micromamba is installed"
+
+    #create env_textgen if not already created
+    make_env
+
+    # hook into env_textgen
+    eval "$(micromamba shell hook --shell=bash $TEXTGEN_DIR/env_textgen)" && echo "mamba hooked"
+    echo "micromamba v. $(micromamba --version) active" # we can now run micromamba in the correct env and shell!
+
+    eval "$($TEXTGEN_DIR/micromamba/bin/micromamba shell hook --shell=bash --prefix=$TEXTGEN_DIR/env_textgen)"
+    build
 } 
 run
 #micromamba --version

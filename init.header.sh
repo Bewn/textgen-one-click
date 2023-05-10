@@ -12,7 +12,7 @@
 # Maintainer: Ben Rosebery <benrosebery@gmail.com>
 
 pkgname=textgen-one-click
-pkgver=0.5
+pkgver=0.6
 pkgrel=1
 arch=('x86_64')
 
@@ -23,13 +23,11 @@ url="https://github.com/Bewn/textgen-one-click"
 
 
 # work in directory run.sh was run in
-_cwd=$PWD
+_cwd=$TEXTGEN_DIR
+
 ############################ function definitions ###############################################
-prepare () {
+prepare_mamba () {
 	cd $_cwd
-	init_env
-	cd $TEXTGEN_DIR
-	
 	#get wget to later get micromamba
 	if [ ! -f wget ]; 
 		then git init && git remote add self $url && git fetch self && git checkout self/main -- wget;
@@ -44,7 +42,7 @@ prepare () {
 }
 
 hook_mamba () {
-	eval $($MAMBA_EXE shell hook $_mamba_env --shell=bash)
+	eval $($MAMBA_EXE shell hook $TEXTGEN_DIR/env_textgen --shell=bash)
 }
 
 make_env () {
@@ -52,17 +50,17 @@ make_env () {
 	if [ ! -d $TEXTGEN_DIR/env_textgen ];
 		then micromamba create --prefix $TEXTGEN_DIR/env_textgen;
 		export mamba_env_dir=$TEXTGEN_DIR/env_textgen
+		echo "mamba environment is created"
 	fi
 }
 
 build () {
-	hook_mamba
     if [ ! -d $_cwd/textgen-portable ]; then mkdir $_cwd/textgen-portable; fi 
 	cd $_cwd/textgen-portable
 
 	# install python and depends with mamba/conda
-    micromamba install python
-	# \ gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers
+	hook_mamba && micromamba install python -p $TEXTGEN_DIR/env_textgen
+	micromamba install gradio pytorch pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers -p $TEXTGEN_DIR/env_textgen
     
 	#install the rest with pip
     #pip install rwkv flexgen gradio_client rwkvstic bitsandbytes llama-cpp-python
