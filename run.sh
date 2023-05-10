@@ -21,9 +21,34 @@ init_env () {
     echo ".textgenrc loaded"
 }
 
+add_to_shellrc () {
+    read -p "would you like to add TEXTGEN_DIR to your login shell? [Y/n]" user_input
+
+    if [[ $user_input='Y' || $user_input='' || $user_input='y' ]];
+        then echo "checking and/or adding to shell rc scripts and /etc/profile.d/textgen.sh"
+
+        if [ -z "$(cat $HOME/.bashrc | grep .textgenrc )" ];
+            then echo "source $HOME/.textgenrc" | tee -a $HOME/.bashrc
+            echo "added to bash";
+        fi
+
+        if [ -z "$(cat $HOME/.zshrc | grep .textgenrc)" ];
+            then echo "source $HOME/.textgenrc" | tee -a $HOME/.zshrc
+            echo "added to zsh";
+        fi
+
+        if [ ! -f /etc/profile.d/textgen.sh ];
+            then echo "source $HOME/.textgenrc" | sudo tee -a /etc/profile.d/textgen.sh
+            echo "added to /etc/profile.d/ i.e. any login shell"
+        fi
+        else echo "TEXTGEN_DIR not set"
+    fi
+}
+
 run () {
     if [ -z $TEXTGEN_DIR ];
         then echo "environment variable TEXTGEN_DIR not set, setting now.";
+        add_to_shellrc
     fi
 
      if [ -f $HOME/.textgenrc ];
