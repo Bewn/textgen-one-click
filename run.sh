@@ -9,8 +9,8 @@ if [ -f $HOME/.textgenrc ];
 fi
 
 if [ -z ${TEXTGEN_DIR} ];
-    echo "TEXTGEN_DIR not set"
-    then exit 0;
+    then echo "TEXTGEN_DIR not set"
+    exit 0;
 fi
 
 #micromamba --version
@@ -21,7 +21,7 @@ fi
 #echo "testing hook"
 #hook_mamba
 #micromamba activate $TEXTGEN_DIR/env_textgen
-
+    x   
 
 
 
