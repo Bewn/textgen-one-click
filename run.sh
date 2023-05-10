@@ -79,6 +79,10 @@ run () {
         y|Y) check_up_to_date ;;
         n|N|*) echo "continuing..." ;;
     esac
+
+    cd $TEXTGEN_DIR/textgen-portable
+    micromamba activate $TEXTGEN_DIR/env_textgen && echo env_textgen activated
+    python server.py --share
 } 
 run
 #micromamba --version
