@@ -23,7 +23,7 @@ init_env () {
 
 run () {
     if [ -z $TEXTGEN_DIR ];
-        then echo "environment variable TEXTGEN_DIR not set, setting now, please run again.";
+        then echo "environment variable TEXTGEN_DIR not set, setting now.";
     fi
 
      if [ -f $HOME/.textgenrc ];
