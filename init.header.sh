@@ -25,15 +25,26 @@ url="https://github.com/Bewn/textgen-one-click"
 # work in directory init.sh was run in
 _cwd=$PWD
 ############################ function definitions ###############################################
+_add_env_var () {
+	$(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.textgenrc)
+}
+
+init_env () {
+	if [ -z "${TEXTGEN_DIR}" ]; 
+		then _add_env_var;
+	fi
+
+	if [ ! -f "$HOME/.textgenrc" ]; 
+		then touch $HOME/.textgenrc
+		echo "# bashrc style environtment and function space" >> $HOME/.textgenrc
+		_add_env_var;
+	fi
+	source $HOME/.textgenrc
+}
+
 prepare () {
 	cd $_cwd
-	if [ -z "${TEXTGEN_DIR}" ]; 
-		then grep $HOME/.bashrc TEXTGEN_DIR > /tmp/has_textgen;
-			if [ -z ${/tmp/has_textgen} ]; 
-				then $(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.bashrc); 
-			fi
-	fi
-	source $HOME/.bashrc
+	init_env
 	cd $TEXTGEN_DIR
 	
 	#get wget to later get micromamba
