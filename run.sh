@@ -5,6 +5,19 @@
 # I'm coding in bash for generic shell, with a functional style!
 
 _cwd=$PWD
+choose_textgen_dir () {
+    read -p "
+             Installing textgen to directory containing run.sh
+             if you would like to install elsewhere, please enter here,
+             otherewise leave blank.
+             enter intall directory now: " input
+    if [ -z $input ];
+      then export TEXTGEN_DIR=$PWD;
+      else export TEXTGEN_DIR=$input
+    fi
+}
+
+
 _add_env_var () {
 	$(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.textgenrc)
 }
@@ -24,20 +37,8 @@ init_env () {
 
 add_to_shellrc () {
     read -p "would you like to add TEXTGEN_DIR to your login shell? [Y/n]" user_input
-
     if [[ $user_input='Y' || $user_input='' || $user_input='y' ]];
-        then echo "checking and/or adding to shell rc scripts and /etc/profile.d/textgen.sh"
-
-        if [ -z "$(cat $HOME/.bashrc | grep .textgenrc )" ];
-            then echo "source $HOME/.textgenrc" | tee -a $HOME/.bashrc
-            echo "added to bash";
-        fi
-
-        if [ -z "$(cat $HOME/.zshrc | grep .textgenrc)" ];
-            then echo "source $HOME/.textgenrc" | tee -a $HOME/.zshrc
-            echo "added to zsh";
-        fi
-
+        then echo "checking and/or adding to /etc/profile.d/textgen.sh"
         if [ ! -f /etc/profile.d/textgen.sh ];
             then echo "source $HOME/.textgenrc" | sudo tee -a /etc/profile.d/textgen.sh
             echo "added to /etc/profile.d/ i.e. any login shell"
@@ -49,10 +50,12 @@ add_to_shellrc () {
 run () {
     if [ -z $TEXTGEN_DIR ];
         then echo "environment variable TEXTGEN_DIR not set, setting now.";
+        choose_textgen_dir
         add_to_shellrc
     fi
-
-     if [ -f $HOME/.textgenrc ];
+    
+: '
+    if [ -f $HOME/.textgenrc ];
         then init_env;
         else create_textgenrc && init_env;
     fi
@@ -61,14 +64,13 @@ run () {
     source $TEXTGEN_DIR/init.header.sh && echo "init header loaded"
 
     ## we now have free access to the functions defined in the header
-    prepare_mamba && echo "micromamba is installed"
+    prepare_mamba
 
     #create env_textgen (passes if already created)
     make_env
 
-    # hook into env_textgen
-    eval "$(micromamba shell hook --shell=bash -p $TEXTGEN_DIR/env_textgen)" && echo "mamba hooked"
-    echo "micromamba v. $(micromamba --version) active" # we can now run micromamba in the correct env and shell!
+    # check mamba
+    echo "micromamba v. $($MAMBA_EXE --version) active" # we can now run micromamba in the correct env and shell!
     
     if [ ! -d $TEXTGEN_DIR/textgen-portable ];
         then build;
@@ -83,6 +85,7 @@ run () {
     cd $TEXTGEN_DIR/textgen-portable
     micromamba activate $TEXTGEN_DIR/env_textgen && echo env_textgen activated
     python server.py --share
+    '
 } 
 run
 #micromamba --version

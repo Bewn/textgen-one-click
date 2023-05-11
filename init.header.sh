@@ -22,7 +22,7 @@ if [ ! -z  $(git --version | grep "No")  ]; then exit; fi
 url="https://github.com/Bewn/textgen-one-click"
 
 
-# work in directory run.sh was run in
+# work in textgen directory
 _cwd=$TEXTGEN_DIR
 
 ############################ function definitions ###############################################
@@ -37,25 +37,22 @@ prepare_mamba () {
 	if [ ! -d $_cwd/micromamba ]; 
 		then mkdir $_cwd/micromamba && cd $_cwd/micromamba
 		wget https://micro.mamba.pm/api/micromamba/linux-64/latest  && tar xf latest;
+		echo "micromamba is installed"
 	fi
-	export MAMBA_EXE=$_cwd/micromamba/bin/micromamba #micromamba now runnable from this script
+	make_env
 }
 
-hook_mamba () {
-	eval $($MAMBA_EXE shell hook $TEXTGEN_DIR/env_textgen --shell=bash)
-}
 
 make_env () {
-	hook_mamba
 	if [ ! -d $TEXTGEN_DIR/env_textgen ];
-		then micromamba create --prefix $TEXTGEN_DIR/env_textgen;
+		then $MAMBA_EXE create --prefix $TEXTGEN_DIR/env_textgen;
 		export mamba_env_dir=$TEXTGEN_DIR/env_textgen
 		echo "mamba environment is created"
 	fi
 }
 
 check_up_to_date () {
-	micromamba update --all -p $TEXTGEN_DIR/env_textgen
+	$MAMBA_EXE update --all -p $TEXTGEN_DIR/env_textgen
 	cd $TEXTGEN_DIR/textgen-portable && git pull original main
 	git_checkout
 }
@@ -69,11 +66,11 @@ build () {
 	cd $_cwd/textgen-portable
 
 	# install python and depends with mamba/conda
-	hook_mamba && micromamba install python -p $TEXTGEN_DIR/env_textgen
-	micromamba install gradio pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers -p $TEXTGEN_DIR/env_textgen -c conda-forge
+	$MAMBA_EXE install python -p $TEXTGEN_DIR/env_textgen
+	$MAMBA_EXE install gradio pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers -p $TEXTGEN_DIR/env_textgen -c conda-forge
     
 	if [ ! -z $(lsmod | grep nvidia) ];
-		then micromamba install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+		then $MAMBA_EXE install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 	fi
 
 	if [ ! -z $(lsmod | grep rocm) ];
