@@ -7,15 +7,27 @@
 _cwd=$PWD
 choose_textgen_dir () {
     read -p "
-             Installing textgen to directory containing run.sh
-             if you would like to install elsewhere, please enter here,
-             otherewise leave blank.
-             enter intall directory now: " input
+            where would you like to install textgen?
+            leave blank to install in $HOME without needing any privileges
+            or enter a directory to install to system with sudo privileges
+
+            ~*~***~***~*~*~***~*~*
+            leave blank if unsure
+            ~*~*~*~***~*~*~**~*~*~
+
+                enter e.g. /opt/ or /usr/local/ or /home/someone-else
+                enter intall directory now: " input
     if [ -z $input ];
-      then export TEXTGEN_DIR=$PWD;
-      else export TEXTGEN_DIR=$input
+      then mkdir -p $HOME/textgen
+        export TEXTGEN_DIR=$HOME/textgen;
+      else 
+        if [ -z $input/textgen ]; 
+            then mkdir $input/textgen
+        fi
+        export TEXTGEN_DIR=$input/textgen
     fi
 }
+_cwd=$TEXTGEN_DIR
 
 
 _add_env_var () {
@@ -36,7 +48,11 @@ init_env () {
 }
 
 add_to_shellrc () {
-    read -p "would you like to add TEXTGEN_DIR to your login shell? [Y/n]" user_input
+    read -p "
+            would you like to add TEXTGEN_DIR to your login shell? 
+            This will add to your /etc/profile.d/ folder and needs sudo privileges
+            it is easily reversible by deleting textgen.sh in profile.d
+                [Y/n]" user_input
     if [[ $user_input='Y' || $user_input='' || $user_input='y' ]];
         then echo "checking and/or adding to /etc/profile.d/textgen.sh"
         if [ ! -f /etc/profile.d/textgen.sh ];
@@ -48,8 +64,16 @@ add_to_shellrc () {
 }
 
 run () {
+
+echo "*~*~*~*~*~*~ beginning run of textgen, will proceed with install... *~*~*~*~*~*~
+
+                   please enjoy this software and report any issues at
+                       github.com/Bewn/textgen-one-click
+
+~*~*~*~*~*~* thank you, support free and open source projects ~*~*~*~*~~*~*~*~*~*~*
+      "
     if [ -z $TEXTGEN_DIR ];
-        then echo "environment variable TEXTGEN_DIR not set, setting now.";
+        then echo "     environment variable TEXTGEN_DIR not set, setting now.";
         choose_textgen_dir
         add_to_shellrc
     fi
