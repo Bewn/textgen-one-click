@@ -70,7 +70,7 @@ build () {
 
 	# install python and depends with mamba/conda
 	hook_mamba && micromamba install python -p $TEXTGEN_DIR/env_textgen
-	micromamba install gradio pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers -p $TEXTGEN_DIR/env_textgen
+	micromamba install gradio pip accelerate colorama pandas datasets markdown numpy pillow pyyaml requests safetensors sentencepiece tqdm peft transformers -p $TEXTGEN_DIR/env_textgen -c conda-forge
     
 	if [ ! -z $(lsmod | grep nvidia) ];
 		then micromamba install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
