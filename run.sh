@@ -27,7 +27,6 @@ choose_textgen_dir () {
         export TEXTGEN_DIR=$input/textgen
     fi
 }
-_cwd=$TEXTGEN_DIR
 
 
 _add_env_var () {
@@ -62,6 +61,7 @@ add_to_shellrc () {
     esac
 }
 
+
 run () {
 
     echo "*~*~*~*~*~*~ beginning run of textgen, will proceed with install... *~*~*~*~*~*~
@@ -69,22 +69,28 @@ run () {
                    please enjoy this software and report any issues at
                        github.com/Bewn/textgen-one-click
 
-    ~*~*~*~*~*~* thank you, support free and open source projects ~*~*~*~*~~*~*~*~*~*~*
+~*~*~*~*~*~* thank you, support free and open source projects ~*~*~*~*~~*~*~*~*~*~*
       "
+
     if [ -z $TEXTGEN_DIR ];
         then echo "     environment variable TEXTGEN_DIR not set, setting now.";
         choose_textgen_dir
         create_textgenrc
         add_to_shellrc
-        init_env
     fi
-    
+
+    if [ ! -f $HOME/.textgenrc ];
+        then create_textgenrc
+    fi
+
+    #load environment via now-ensured rc file 
+    init_env
+
+    #load in header now that TEXTGEN_DIR is ensured
+    cp $_cwd/init.header.sh $TEXTGEN_DIR
+    source $TEXTGEN_DIR/init.header.sh && echo "init header loaded"
+
 : '
-    if [ -f $HOME/.textgenrc ];
-        then init_env;
-        else create_textgenrc && init_env;
-    fi
-    
     # load in header now that TEXTGEN_DIR is ensured
     source $TEXTGEN_DIR/init.header.sh && echo "init header loaded"
 
@@ -110,6 +116,7 @@ run () {
     cd $TEXTGEN_DIR/textgen-portable
     micromamba activate $TEXTGEN_DIR/env_textgen && echo env_textgen activated
     python server.py --share
+
     '
 } 
 run
