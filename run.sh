@@ -31,7 +31,7 @@ _cwd=$TEXTGEN_DIR
 
 
 _add_env_var () {
-	$(echo "export TEXTGEN_DIR=$_cwd" >> $HOME/.textgenrc)
+	$(echo "export TEXTGEN_DIR=$TEXTGEN_DIR" >> $HOME/.textgenrc)
 }
 
 create_textgenrc () {
@@ -51,31 +51,32 @@ add_to_shellrc () {
     read -p "
             would you like to add TEXTGEN_DIR to your login shell? 
             This will add to your /etc/profile.d/ folder and needs sudo privileges
-            it is easily reversible by deleting textgen.sh in profile.d
-                [Y/n]" user_input
-    if [[ $user_input='Y' || $user_input='' || $user_input='y' ]];
-        then echo "checking and/or adding to /etc/profile.d/textgen.sh"
-        if [ ! -f /etc/profile.d/textgen.sh ];
-            then echo "source $HOME/.textgenrc" | sudo tee -a /etc/profile.d/textgen.sh
-            echo "added to /etc/profile.d/ i.e. any login shell"
-        fi
-        else echo "TEXTGEN_DIR not set"
-    fi
+            it is easily reversible by deleting textgen.sh in profile.d [Y/n]" user_input
+    case $user_input in
+        'Y'|'y'|'') echo "checking and/or adding /etc/profile.d/textgen.sh" 
+                    if [ ! -f /etc/profile.d/textgen.sh ]; 
+                        then echo "if [ -f $HOME/.textgenrc ] then source $HOME/.textgenrc fi" | sudo tee -a /etc/profile.d/textgen.sh
+                        echo "      added to login shell" ;
+                    fi ;;
+        'N'|'n') echo "not added to login shell" ;;
+    esac
 }
 
 run () {
 
-echo "*~*~*~*~*~*~ beginning run of textgen, will proceed with install... *~*~*~*~*~*~
+    echo "*~*~*~*~*~*~ beginning run of textgen, will proceed with install... *~*~*~*~*~*~
 
                    please enjoy this software and report any issues at
                        github.com/Bewn/textgen-one-click
 
-~*~*~*~*~*~* thank you, support free and open source projects ~*~*~*~*~~*~*~*~*~*~*
+    ~*~*~*~*~*~* thank you, support free and open source projects ~*~*~*~*~~*~*~*~*~*~*
       "
     if [ -z $TEXTGEN_DIR ];
         then echo "     environment variable TEXTGEN_DIR not set, setting now.";
         choose_textgen_dir
+        create_textgenrc
         add_to_shellrc
+        init_env
     fi
     
 : '
